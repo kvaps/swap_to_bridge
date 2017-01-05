@@ -9,11 +9,18 @@ R=/run/root
 
 INTERFACE="$1"
 BRIDGE="$2"
+REPEAT=120 #2 minutes
 
 # Wait for IP
 while [ -z "$IPADDR" ]; do
   IPADDR="$(ip addr list $INTERFACE | grep -oP '(?<=inet )([0-9]+.){3}[0-9]+/[0-9]+' | tail -n1)"
   sleep 1
+    # Timeout check
+    if [ "$REPEAT" -gt 0 ]; then
+        ((REPEAT--))
+    else
+        exit 1
+    fi
 done
 DEFROUTE="$(ip route | grep -oP '(?<=default via )([0-9]+.){3}[0-9]+')"
 
