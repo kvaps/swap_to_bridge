@@ -1,19 +1,19 @@
 #!/bin/bash
 #
 # Usage:
-# swap_to_bridge.sh eno1 br0
+# swap_to_bridge.sh [bridge_name]
 #
 set -x
 mount -o remount,exec /run
 R=/run/root
 
-INTERFACE="$1"
-BRIDGE="$2"
+INTERFACE="$(ip route | grep -v '^default' | grep -oP -m1 '(?<=dev )[^ ]*')"
+BRIDGE="${1-br0}"
 REPEAT=120 #2 minutes
 
 # Wait for IP
 while [ -z "$IPADDR" ]; do
-  IPADDR="$(ip addr list $INTERFACE | grep -oP '(?<=inet )([0-9]+.){3}[0-9]+/[0-9]+' | tail -n1)"
+  IPADDR="$(ip addr list $INTERFACE | grep -oP -m1 '(?<=inet )([0-9]+.){3}[0-9]+/[0-9]+')"
   sleep 1
     # Timeout check
     if [ "$REPEAT" -gt 0 ]; then
