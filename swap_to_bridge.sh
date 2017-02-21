@@ -4,8 +4,8 @@
 # swap_to_bridge.sh [bridge_name]
 #
 set -x
-mount -o remount,exec /run
-R=/run/root
+#mount -o remount,exec /tmp
+R=/tmp/root
 
 INTERFACE="$(ip route | grep -v '^default' | grep -oP -m1 '(?<=dev )[^ ]*')"
 BRIDGE="${1-br0}"
